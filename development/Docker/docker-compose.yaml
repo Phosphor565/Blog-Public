@@ -1,0 +1,8 @@
+services:
+    dev-container:
+        image: my-dev-img
+        container_name: DevContainer
+        volumes:
+            - .:/development
+        tty: true
+        stdin_open: true
