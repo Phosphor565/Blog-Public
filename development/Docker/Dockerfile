@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     liblzma-dev \
     openssh-client wget unzip zip gnupg lsb-release \
     vim nano direnv \
-    python3-pip gitpipx \
+    python3-pip gitpipx \cd
  && rm -rf /var/lib/apt/lists/*
 
 # Set time and language
