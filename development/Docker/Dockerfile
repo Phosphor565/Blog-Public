@@ -35,9 +35,6 @@ RUN sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/micr
 RUN sudo apt-get update
 RUN sudo apt-get install azure-functions-core-tools-4
 
-# UV Python Package Manager - https://docs.astral.sh/uv/
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
@@ -67,6 +64,9 @@ RUN cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
  && printf '\n# pyenv\nexport PYENV_ROOT="$HOME/.pyenv"\nexport PATH="$PYENV_ROOT/bin:$PATH"\neval "$(pyenv init -)"\neval "$(pyenv virtualenv-init -)"\n' >> ~/.zshrc \
  && printf '\n# direnv\nexport EDITOR=vim\neval "$(direnv hook zsh)"\n' >> ~/.zshrc \
  && printf '\n# pipx\nexport PATH="$HOME/.local/bin:$PATH"\n' >> ~/.zshrc
+
+# UV Python Package Manager - https://docs.astral.sh/uv/
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
