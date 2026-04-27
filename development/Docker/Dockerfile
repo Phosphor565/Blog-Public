@@ -10,13 +10,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     liblzma-dev \
     openssh-client wget unzip zip gnupg lsb-release \
     vim nano direnv \
-    python3-pip gitpipx \cd
- && rm -rf /var/lib/apt/lists/*
+    python3-pip pipx \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set time and language
 RUN locale-gen en_GB.UTF-8 && update-locale LANG=en_GB.UTF-8
 ENV LANG=en_GB.UTF-8
 ENV LC_ALL=en_GB.UTF-8
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/London
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -41,6 +43,17 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Creature Comforts - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+ # create new user and ensure Image uses user and has working dir
+RUN useradd -m -s /usr/bin/zsh developer \
+ && echo "developer ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/99-developer \
+ && chmod 0440 /etc/sudoers.d/99-developer
+
+USER developer
+RUN sudo mkdir -p /development
+WORKDIR /development
+ENV HOME=/home/developer
+ENV SHELL=/usr/bin/zsh
+
 # OhMyZsh - https://ohmyz.sh/
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
  && git config --global init.defaultBranch main \
@@ -54,17 +67,6 @@ RUN cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
  && printf '\n# pyenv\nexport PYENV_ROOT="$HOME/.pyenv"\nexport PATH="$PYENV_ROOT/bin:$PATH"\neval "$(pyenv init -)"\neval "$(pyenv virtualenv-init -)"\n' >> ~/.zshrc \
  && printf '\n# direnv\nexport EDITOR=vim\neval "$(direnv hook zsh)"\n' >> ~/.zshrc \
  && printf '\n# pipx\nexport PATH="$HOME/.local/bin:$PATH"\n' >> ~/.zshrc
-
- # create new user and ensure Image uses user and has working dir
-RUN useradd -m -s /usr/bin/zsh developer \
- && echo "developer ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/99-developer \
- && chmod 0440 /etc/sudoers.d/99-developer
-
-USER developer
-RUN sudo mkdir -p /development
-WORKDIR /development
-ENV HOME=/home/developer
-ENV SHELL=/usr/bin/zsh
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 

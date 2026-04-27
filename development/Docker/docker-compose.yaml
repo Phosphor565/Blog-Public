@@ -1,7 +1,7 @@
 services:
     dev-container:
         image: my-dev-img
-        container_name: DevContainer
+        container_name: example-dev-container
         volumes:
             - .:/development
         tty: true
