@@ -20,6 +20,17 @@ ENV LC_ALL=en_GB.UTF-8
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/London
 
+# create new user and ensure Image uses user and has working dir
+RUN useradd -m -s /usr/bin/zsh developer \
+ && echo "developer ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/99-developer \
+ && chmod 0440 /etc/sudoers.d/99-developer
+
+USER developer
+RUN sudo mkdir -p /development
+WORKDIR /development
+ENV HOME=/home/developer
+ENV SHELL=/usr/bin/zsh
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
@@ -39,17 +50,6 @@ RUN sudo apt-get install azure-functions-core-tools-4
 
 
 # Creature Comforts - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
- # create new user and ensure Image uses user and has working dir
-RUN useradd -m -s /usr/bin/zsh developer \
- && echo "developer ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/99-developer \
- && chmod 0440 /etc/sudoers.d/99-developer
-
-USER developer
-RUN sudo mkdir -p /development
-WORKDIR /development
-ENV HOME=/home/developer
-ENV SHELL=/usr/bin/zsh
 
 # OhMyZsh - https://ohmyz.sh/
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
