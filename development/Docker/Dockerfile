@@ -40,12 +40,14 @@ ENV SHELL=/usr/bin/zsh
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 # Azure Function App Local Dev - https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local
+# run as root for this installation
+USER root
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 RUN sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 RUN sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs 2>/dev/null)-prod $(lsb_release -cs 2>/dev/null) main" > /etc/apt/sources.list.d/dotnetdev.list'
 RUN sudo apt-get update
 RUN sudo apt-get install azure-functions-core-tools-4
-
+USER developer
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
@@ -60,8 +62,8 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
 # Ensure zsh is configured
 RUN cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
  && sed -i 's/^ZSH_THEME=.*/ZSH_THEME="robbyrussell"/' ~/.zshrc \
- && sed -i 's/^plugins=.*/plugins=(git python pip pyenv docker docker-compose)/' ~/.zshrc \
- && printf '\n# pyenv\nexport PYENV_ROOT="$HOME/.pyenv"\nexport PATH="$PYENV_ROOT/bin:$PATH"\neval "$(pyenv init -)"\neval "$(pyenv virtualenv-init -)"\n' >> ~/.zshrc \
+ && sed -i 's/^plugins=.*/plugins=(git python pip docker docker-compose)/' ~/.zshrc \
+ && printf '\n# pyenv\nexport PYENV_ROOT="$HOME/.pyenv"\nexport PATH="$PYENV_ROOT/bin:$PATH"\nif command -v pyenv >/dev/null 2>&1; then\n  eval "$(pyenv init -)"\n  eval "$(pyenv virtualenv-init -)"\nfi\n' >> ~/.zshrc \
  && printf '\n# direnv\nexport EDITOR=vim\neval "$(direnv hook zsh)"\n' >> ~/.zshrc \
  && printf '\n# pipx\nexport PATH="$HOME/.local/bin:$PATH"\n' >> ~/.zshrc
 
