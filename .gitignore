@@ -1,0 +1,3 @@
+*.venv*
+*host.json*
+__pycache__

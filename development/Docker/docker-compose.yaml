@@ -4,5 +4,22 @@ services:
         container_name: example-dev-container
         volumes:
             - .:/development
+        networks:
+            - devnet
         tty: true
         stdin_open: true
+
+    dev-azurite:
+        image: mcr.microsoft.com/azure-storage/azurite
+        container_name: dev-azurite
+        ports:
+            - "10000:10000"
+            - "10001:10001"
+            - "10002:10002"
+        command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0
+        networks:
+            - devnet
+
+networks:
+    devnet:
+        driver: bridge
